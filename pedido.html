@@ -8,7 +8,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 
         body {
-            background-color: #f3e5f5; /* Fundo levemente roxo/lilás */
+            background-color: #f3e5f5;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,9 +18,51 @@
             overflow: hidden;
         }
 
-        /* --- TELA INICIAL --- */
-        #envelope-wrapper {
+        /* --- TELA DE SENHA --- */
+        #tela-senha {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #e3f2fd;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: 0.5s;
+        }
+
+        #tela-senha h2 {
+            color: #4a148c;
+            margin-bottom: 20px;
+        }
+
+        #input-senha {
+            padding: 15px;
+            font-size: 1.2em;
+            border-radius: 15px;
+            border: 3px solid #b39ddb;
+            text-align: center;
+            outline: none;
+            width: 200px;
+        }
+
+        #btn-senha {
+            margin-top: 15px;
+            padding: 10px 30px;
+            background-color: #7e57c2;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* --- TELA INICIAL (ENVELOPE) --- */
+        #envelope-wrapper {
+            display: none; /* Escondido até acertar a senha */
             flex-direction: column;
             align-items: center;
             justify-content: flex-start; 
@@ -31,7 +73,7 @@
         }
 
         .texto-inicial {
-            color: #4a148c; /* Roxo escuro */
+            color: #4a148c;
             font-size: 2.8em; 
             font-weight: 700;
             text-align: center;
@@ -45,7 +87,7 @@
             position: relative;
             width: 300px;
             height: 220px;
-            background-color: #9575cd; /* Roxo médio */
+            background-color: #9575cd;
             border-radius: 0 0 15px 15px;
             box-shadow: 0 25px 50px rgba(0,0,0,0.15);
         }
@@ -89,8 +131,8 @@
             display: none; 
             background: rgba(255, 255, 255, 0.98);
             border-radius: 50px;
-            box-shadow: 0 40px 100px rgba(106, 27, 154, 0.3); /* Sombra roxa */
-            border: 12px solid #b39ddb; /* Borda roxa clara */
+            box-shadow: 0 40px 100px rgba(106, 27, 154, 0.3);
+            border: 12px solid #b39ddb;
             z-index: 10;
             width: 950px;  
             height: 700px; 
@@ -109,7 +151,6 @@
             text-align: center;
         }
 
-        /* Coração Gigante Vermelho com Brilho */
         .coracao-emoji {
             font-size: 150px;
             filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.5));
@@ -168,6 +209,12 @@
 </head>
 <body>
 
+    <div id="tela-senha">
+        <h2>Digite o código secreto ✨</h2>
+        <input type="password" id="input-senha" placeholder="Sua senha...">
+        <button id="btn-senha" onclick="verificarSenha()">Entrar</button>
+    </div>
+
     <div id="envelope-wrapper" onclick="abrirCarta()">
         <p class="texto-inicial"><b>Eu sei que to um pouco atrasado mas queria oficializar algo hehe</b></p>
         <div class="envelope">
@@ -187,6 +234,20 @@
     </div>
 
     <script>
+        // Função para verificar a senha
+        function verificarSenha() {
+            const senhaInserida = document.getElementById('input-senha').value;
+            const senhaCorreta = "060126";
+
+            if (senhaInserida === senhaCorreta) {
+                document.getElementById('tela-senha').style.display = 'none';
+                document.getElementById('envelope-wrapper').style.display = 'flex';
+            } else {
+                alert("Senha incorreta! Tente novamente 🧐");
+                document.getElementById('input-senha').value = "";
+            }
+        }
+
         function abrirCarta() {
             document.getElementById('envelope-wrapper').style.display = 'none';
             const pedido = document.getElementById('conteudo-pedido');
@@ -197,7 +258,6 @@
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart-fall');
-            // Mistura de emojis azuis, roxos e brilhos
             const emojis = ['💙', '💜', '✨', '💎', '💍', '🔮'];
             heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
             heart.style.left = Math.random() * 100 + 'vw';
@@ -221,7 +281,6 @@
             titulo.style.fontSize = "2.5em"; 
             titulo.style.color = "#6a1b9a";
             document.querySelector('.btn-container').style.display = 'none';
-            // Troca o coração por um ainda mais brilhante
             document.querySelector('.coracao-emoji').innerText = "💝";
             setInterval(createHeart, 70); 
         }
