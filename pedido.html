@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Minha Deusa ✨</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+        body {
+            background-color: #f3e5f5; /* Fundo levemente roxo/lilás */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+
+        /* --- TELA INICIAL --- */
+        #envelope-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; 
+            height: 95vh; 
+            padding-top: 10px;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        .texto-inicial {
+            color: #4a148c; /* Roxo escuro */
+            font-size: 2.8em; 
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 80px; 
+            max-width: 1000px;
+            line-height: 1.2;
+            text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.8);
+        }
+
+        .envelope {
+            position: relative;
+            width: 300px;
+            height: 220px;
+            background-color: #9575cd; /* Roxo médio */
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: -110px;
+            left: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 110px solid #7e57c2;
+        }
+
+        .selo {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background-color: #6a1b9a;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 35px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+
+        /* --- TELA DO PEDIDO (GIGANTE) --- */
+        #conteudo-pedido {
+            display: none; 
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 50px;
+            box-shadow: 0 40px 100px rgba(106, 27, 154, 0.3); /* Sombra roxa */
+            border: 12px solid #b39ddb; /* Borda roxa clara */
+            z-index: 10;
+            width: 950px;  
+            height: 700px; 
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #4a148c;
+            font-size: 3.5em; 
+            margin: 30px 0;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* Coração Gigante Vermelho com Brilho */
+        .coracao-emoji {
+            font-size: 150px;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.5));
+            animation: beat .8s infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes beat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 100px; 
+            margin-top: 40px;
+        }
+
+        button {
+            padding: 30px 80px;
+            font-size: 2em;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        #btn-sim { 
+            background: linear-gradient(135deg, #7e57c2, #4a148c); 
+            color: white; 
+            box-shadow: 0 15px 30px rgba(126, 87, 194, 0.4); 
+        }
+
+        #btn-nao { 
+            background-color: #cfd8dc; 
+            color: #546e7a; 
+            position: relative;
+        }
+
+        .heart-fall {
+            position: absolute;
+            top: -50px;
+            pointer-events: none;
+            z-index: 1;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="envelope-wrapper" onclick="abrirCarta()">
+        <p class="texto-inicial"><b>Eu sei que to um pouco atrasado mas queria oficializar algo hehe</b></p>
+        <div class="envelope">
+            <div class="selo">💜</div>
+        </div>
+        <p style="color: #7e57c2; margin-top: 40px; font-size: 1.3em; font-weight: bold;">(Clique no selo para abrir)</p>
+    </div>
+
+    <div id="conteudo-pedido">
+        <div class="coracao-emoji">💖</div>
+        <h1 id="titulo"><b>Aceita oficializar nosso namoro <br>Minha Deusa?</b></h1>
+        
+        <div class="btn-container">
+            <button id="btn-sim" onclick="aceitou()">SIM!</button>
+            <button id="btn-nao" onmouseover="foge(this)">Não</button>
+        </div>
+    </div>
+
+    <script>
+        function abrirCarta() {
+            document.getElementById('envelope-wrapper').style.display = 'none';
+            const pedido = document.getElementById('conteudo-pedido');
+            pedido.style.display = 'flex'; 
+            setInterval(createHeart, 300);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-fall');
+            // Mistura de emojis azuis, roxos e brilhos
+            const emojis = ['💙', '💜', '✨', '💎', '💍', '🔮'];
+            heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = Math.random() * 30 + 20 + 'px';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+
+        function foge(btn) {
+            btn.style.position = 'absolute';
+            const larguraJanela = window.innerWidth - 250;
+            const alturaJanela = window.innerHeight - 200;
+            btn.style.left = Math.random() * larguraJanela + 'px';
+            btn.style.top = Math.random() * alturaJanela + 'px';
+        }
+
+        function aceitou() {
+            const titulo = document.getElementById('titulo');
+            titulo.innerHTML = "<b>Agora assinou o contrato para nos ficar para sempre junto e feliz MUAHAHAHAH</b>";
+            titulo.style.fontSize = "2.5em"; 
+            titulo.style.color = "#6a1b9a";
+            document.querySelector('.btn-container').style.display = 'none';
+            // Troca o coração por um ainda mais brilhante
+            document.querySelector('.coracao-emoji').innerText = "💝";
+            setInterval(createHeart, 70); 
+        }
+    </script>
+</body>
+</html>
