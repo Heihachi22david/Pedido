@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Minha Rainha ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #d90429; 
+            --secondary: #f08080; 
+            --bg: #ffe5ec; 
+            --letter-bg: #ffffff;
+            --wax-seal: #a60011;
+            --success: #28a745;
+            --text-dark: #333;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- TELA DE BLOQUEIO --- */
+        #lock-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease;
+        }
+        #lock-screen.hidden { opacity: 0; pointer-events: none; }
+        h3 { color: var(--primary); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        input {
+            padding: 15px;
+            font-size: 1.5rem;
+            border-radius: 15px;
+            border: 3px solid var(--secondary);
+            text-align: center;
+            width: 220px;
+            outline: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        #error-msg { color: var(--primary); font-weight: bold; margin-top: 15px; display: none; }
+
+        /* --- SEÇÃO DO PEDIDO --- */
+        #pedido-section {
+            display: none; /* Ativado após o código */
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: opacity 1s ease;
+        }
+
+        .center-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -40%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .intro-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+            text-align: center;
+            width: 340px;
+        }
+
+        /* Envelope */
+        .envelope {
+            position: relative;
+            width: 320px;
+            height: 200px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            z-index: 10;
+            border-top: 110px solid var(--secondary);
+            border-left: 162px solid transparent;
+            border-right: 162px solid transparent;
+            transform-origin: top;
+            transition: transform 0.8s ease;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .open.envelope::before { transform: rotateX(180deg); z-index: 0; }
+
+        /* Selo de Cera */
+        .wax-seal {
+            position: absolute;
+            z-index: 11;
+            background: var(--wax-seal);
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: opacity 0.4s;
+        }
+        .open .wax-seal { opacity: 0; }
+
+        /* A Carta */
+        .letter {
+            position: absolute;
+            bottom: 5px;
+            width: 95%;
+            background: var(--letter-bg);
+            padding: 25px 20px;
+            text-align: center;
+            transition: transform 1s ease, opacity 1s;
+            z-index: 5;
+            opacity: 0;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+
+        .open .letter {
+            transform: translateY(-215px);
+            opacity: 1;
+            z-index: 20;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .letter h2 { font-family: 'Dancing Script', cursive; color: var(--primary); font-size: 2rem; margin-bottom: 15px; }
+        .letter p { color: var(--text-dark); font-size: 0.95rem; line-height: 1.5; margin-bottom: 10px; font-weight: 500; }
+
+        /* Botões */
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        #btn-sim { background: var(--success); color: white; }
+        #btn-sim:hover { transform: scale(1.05); }
+        #btn-nao { background: var(--primary); color: white; position: relative; }
+
+        /* --- PARTE 2: CELEBRAÇÃO --- */
+        #celebracao-section {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            background-color: var(--bg);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #msg-te-amo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5.5rem;
+            transition: color 0.3s, transform 0.2s;
+            user-select: none;
+            z-index: 10;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Estilo do Cronômetro */
+        #timer-container {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            z-index: 10;
+            backdrop-filter: blur(5px);
+        }
+        #timer-label { font-size: 1.1rem; color: #555; margin-bottom: 10px; font-weight: 600; }
+        #timer-display {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: bold;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .timer-unit { text-align: center; }
+        .timer-val { font-size: 2rem; display: block; }
+        .timer-desc { font-size: 0.8rem; color: #777; text-transform: uppercase; }
+
+        /* --- ELEMENTOS ANIMADOS --- */
+        .emoji {
+            position: fixed;
+            top: -50px;
+            z-index: 1;
+            animation: fall linear forwards;
+            pointer-events: none;
+        }
+
+        .click-heart {
+            position: absolute;
+            color: rgba(255, 105, 180, 0.6);
+            font-size: 2.5rem;
+            pointer-events: none;
+            animation: flyUp 2s ease-out forwards;
+            z-index: 20;
+        }
+
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+        @keyframes flyUp {
+            0% { transform: translateY(0) scale(1); opacity: 0.8; }
+            100% { transform: translateY(-250px) scale(2); opacity: 0; }
+        }
+
+        /* Responsividade para celulares pequenos */
+        @media (max-width: 360px) {
+            #msg-te-amo { font-size: 4rem; }
+            #timer-display { font-size: 1.2rem; gap: 10px; }
+            .timer-val { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body onclick="handleGlobalClick(event)">
+
+    <div id="lock-screen">
+        <h3>Digite o código:</h3>
+        <input type="password" id="code-input" placeholder="******" maxlength="6">
+        <p id="error-msg">Código incorreto!</p>
+    </div>
+
+    <div id="pedido-section">
+        <div class="center-container">
+            <div class="intro-text" id="intro">Oeee meu amorr, essa carta é para voce :))</div>
+            <div class="envelope" id="envelope" onclick="openLetter(event)">
+                <div class="wax-seal">❤️</div>
+                <div class="letter">
+                    <h2>Yasmim, meu amor...</h2>
+                    <p>Você quer namorar comigo?</p>
+                    <p>Eu vou te dar todo carinho, atenção, amor e te tratar muito bem e muito mais.</p>
+                    <p>Eu te amo demais minha rainha, você é muito importante para mim.</p>
+                    <div class="buttons-container">
+                        <button class="btn" id="btn-sim" onclick="finalizar(event)">Simmmm</button>
+                        <button class="btn" id="btn-nao" onmouseover="fujir()" onclick="fujir()">Não</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="celebracao-section">
+        <h1 id="msg-te-amo">Eu te amo ❤️</h1>
+        
+        <div id="timer-container">
+            <p id="timer-label">Estamos juntos há:</p>
+            <div id="timer-display">
+                <div class="timer-unit"><span class="timer-val" id="t-meses">0</span><span class="timer-desc">Meses</span></div>
+                <div class="timer-unit"><span class="timer-val" id="t-dias">0</span><span class="timer-desc">Dias</span></div>
+                <div class="timer-unit"><span class="timer-val" id="t-horas">0</span><span class="timer-desc">Horas</span></div>
+                <div class="timer-unit"><span class="timer-val" id="t-segs">0</span><span class="timer-desc">Segs</span></div>
+            </div>
+        </div>
+        
+        <p style="color: #777; margin-top: 30px; z-index: 10; font-size: 0.9rem;">(Clique na tela)</p>
+    </div>
+
+    <script>
+        // Configurações
+        const correctCode = "280326";
+        const storageKey = 'dataInicioNamoroYasmim';
+        
+        // Elementos
+        const input = document.getElementById('code-input');
+        const lockScreen = document.getElementById('lock-screen');
+        const pedidoSection = document.getElementById('pedido-section');
+        const celebracaoSection = document.getElementById('celebracao-section');
+        const btnNao = document.getElementById('btn-nao');
+        const msgTeAmo = document.getElementById('msg-te-amo');
+        
+        // Variáveis de Estado
+        let modoCelebracao = false;
+        let rainInterval;
+        let timerInterval;
+        const cores = ['#d90429', '#ff4d6d', '#7209b7', '#3a0ca3', '#f72585', '#4361ee'];
+        let corIndex = 0;
+
+        // --- INICIALIZAÇÃO ---
+        // Verifica se ela já aceitou antes (para pular direto para a celebração)
+        window.onload = function() {
+            const dataSalva = localStorage.getItem(storageKey);
+            if (dataSalva) {
+                // Se já existe data, pula o bloqueio e o pedido
+                lockScreen.style.display = 'none';
+                celebracaoSection.style.display = 'flex';
+                modoCelebracao = true;
+                startRain();
+                iniciarCronometro(new Date(dataSalva));
+            }
+        };
+
+        // --- LÓGICA DE BLOQUEIO ---
+        input.addEventListener('input', () => {
+            if (input.value === correctCode) {
+                lockScreen.classList.add('hidden');
+                pedidoSection.style.display = 'block';
+                startRain(); // Chuva começa aqui
+            } else if (input.value.length === 6) {
+                document.getElementById('error-msg').style.display = 'block';
+            } else {
+                document.getElementById('error-msg').style.display = 'none';
+            }
+        });
+
+        // --- LÓGICA DO PEDIDO ---
+        function openLetter(e) {
+            // Garante que não abra se clicar nos botões
+            if (e.target.tagName === 'BUTTON') return;
+            document.getElementById('envelope').classList.add('open');
+            document.getElementById('intro').style.opacity = '0';
+        }
+
+        function fujir() {
+            // Área segura para o botão não sair da tela
+            const padding = 20;
+            const maxX = window.innerWidth - btnNao.offsetWidth - padding;
+            const maxY = window.innerHeight - btnNao.offsetHeight - padding;
+            
+            const x = Math.random() * (maxX - padding) + padding;
+            const y = Math.random() * (maxY - padding) + padding;
+            
+            btnNao.style.position = "fixed";
+            btnNao.style.left = x + "px";
+            btnNao.style.top = y + "px";
+            btnNao.style.zIndex = "1000";
+        }
+
+        // Aceitar o pedido
+        function finalizar(e) {
+            e.stopPropagation();
+            
+            // 1. Salva a data exata do clique AGORA
+            const agora = new Date();
+            localStorage.setItem(storageKey, agora.toISOString());
+            
+            // 2. Transição visual
+            pedidoSection.style.opacity = '0';
+            setTimeout(() => {
+                pedidoSection.style.display = 'none';
+                celebracaoSection.style.display = 'flex';
+                modoCelebracao = true;
+                iniciarCronometro(agora);
+            }, 1000);
+        }
+
+        // --- LÓGICA DA CELEBRAÇÃO ---
+        function handleGlobalClick(e) {
+            if (!modoCelebracao) return;
+
+            // Muda cor do "Eu te amo"
+            corIndex = (corIndex + 1) % cores.length;
+            msgTeAmo.style.color = cores[corIndex];
+            msgTeAmo.style.transform = 'scale(1.05)';
+            setTimeout(() => msgTeAmo.style.transform = 'scale(1)', 100);
+
+            // Cria Coração Rosa Transparente no Clique
+            const h = document.createElement('div');
+            h.className = 'click-heart';
+            h.innerHTML = '❤️';
+            h.style.left = (e.clientX - 20) + 'px';
+            h.style.top = (e.clientY - 20) + 'px';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 2000);
+        }
+
+        // --- LÓGICA DO CRONÔMETRO ---
+        function iniciarCronometro(dataInicio) {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            function atualizar() {
+                const agora = new Date();
+                let diff = agora - dataInicio; // diferença em milissegundos
+
+                // Cálculos de tempo
+                const segsTotais = Math.floor(diff / 1000);
+                const minsTotais = Math.floor(segsTotais / 60);
+                const horasTotais = Math.floor(minsTotais / 60);
+                const diasTotais = Math.floor(horasTotais / 24);
+
+                // Cálculo aproximado de meses (considerando mês de 30.44 dias)
+                const meses = Math.floor(diasTotais / 30.4375);
+                const dias = diasTotais % 30; // Dias restantes após tirar os meses
+                const horas = horasTotais % 24;
+                const segundos = segsTotais % 60;
+
+                // Atualiza o HTML
+                document.getElementById('t-meses').innerText = meses;
+                document.getElementById('t-dias').innerText = dias;
+                document.getElementById('t-horas').innerText = horas;
+                document.getElementById('t-segs').innerText = segundos;
+            }
+
+            atualizar(); // roda uma vez imediatamente
+            timerInterval = setInterval(atualizar, 1000); // roda a cada segundo
+        }
+
+        // --- EFEITOS DE FUNDO ---
+        function startRain() {
+            if (rainInterval) return;
+            const emojis = ['❤️', '💙', '💜', '💖'];
+            rainInterval = setInterval(() => {
+                const e = document.createElement('div');
+                e.className = 'emoji';
+                e.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                e.style.left = Math.random() * 100 + 'vw';
+                e.style.fontSize = (Math.random() * 10 + 20) + 'px'; // tamanhos variados
+                e.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                e.style.opacity = Math.random() * 0.5 + 0.4; // opacidade variada
+                document.body.appendChild(e);
+                setTimeout(() => e.remove(), 5000);
+            }, 300);
+        }
+    </script>
+</body>
+</html>
